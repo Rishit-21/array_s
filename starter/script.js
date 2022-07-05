@@ -61,11 +61,24 @@ const inputLoanAmount = document.querySelector('.form__input--loan-amount');
 const inputCloseUsername = document.querySelector('.form__input--user');
 const inputClosePin = document.querySelector('.form__input--pin');
 
-const displayMovements = function(movements){
+let currentAcc;
+let transferAcc;
+let balancee
+
+let updateValue=function(){
+  displayMovements(currentAcc.movements)
+  calcPrintbalance(currentAcc)
+  displaySummary(currentAcc)
+}
+
+
+
+const displayMovements = function(movements,sort=false){
   containerMovements.innerHTML='';
 
+  const movs = sort ? movements.slice().sort((a,b)=>a-b):movements;
 
-  movements.forEach(function(mov,i){
+  movs.forEach(function(mov,i){
     
     const type = mov>0?'deposit':'withdrawal';
      const html =`<div class="movements__row">
@@ -75,7 +88,7 @@ const displayMovements = function(movements){
    containerMovements.insertAdjacentHTML('afterbegin',html);
   })
 }
-displayMovements(account1.movements)
+
 
 const creatUsername = function(acc){
   accounts.forEach(function(acc){
@@ -89,23 +102,143 @@ const creatUsername = function(acc){
 
 creatUsername(accounts);
 
-const calcPrintbalance = function(movements){
-  const balance = movements.reduce((acc,cur)=> acc+cur , 0);
-  labelBalance.textContent=`${balance}EUR`;
+const calcPrintbalance = function(acc){
+   acc.balance = acc.movements.reduce((acc,cur)=> acc+cur , 0);
+  labelBalance.textContent=`${acc.balance}EUR`;
 }
-calcPrintbalance(account1.movements)
 
-const displaySummary = function(movements){
-  const income = movements.filter(mov => mov >0).reduce((acc,mov)=> acc+mov,0);
+
+const displaySummary = function(acc){
+  const income = acc.movements.filter(mov => mov >0).reduce((acc,mov)=> acc+mov,0);
   labelSumIn.textContent = `${income}EUR`
 
-    const out = movements.filter(mov => mov <0).reduce((acc,mov)=> acc+mov,0);
+    const out = acc.movements.filter(mov => mov <0).reduce((acc,mov)=> acc+mov,0);
     labelSumOut.textContent = `${Math.abs(out)}EUR`
-    
-    const interest=movements.filter(mov => mov>0).map(deposit => deposit*1.2/100).reduce((acc,mov)=> acc+mov,0);
+     
+    const interest=acc.movements.filter(mov => mov>0).map(deposit => (deposit*acc.interestRate)/100).filter((int,i,arr)=>{
+      return int >=1;
+    }).reduce((acc,mov)=> acc+mov,0);
     labelSumInterest.textContent=interest;
 }
-displaySummary(account1.movements);
+
+
+btnLogin.addEventListener('click',function(e){
+  //Prevent form from submitting
+  e.preventDefault();
+ currentAcc = accounts.find(acc=>acc.username===inputLoginUsername.value)
+
+ if(currentAcc?.pin===Number(inputLoginPin.value)){
+    document.querySelector('.app').style.opacity=1;
+    labelWelcome.textContent=`Welcome back ${currentAcc.owner.split(' ')[0]}`;
+    updateValue();
+    
+ }
+ else{
+  alert("Account does not exist");
+ }
+ inputLoginUsername.value=inputLoginPin.value='';
+
+
+
+})
+btnTransfer.addEventListener('click',function(e){
+  e.preventDefault();
+  transferAcc= accounts.find(acc=>acc.username === inputTransferTo.value)
+  if(transferAcc){
+    if(Number(inputTransferAmount.value)< currentAcc.balance && inputTransferAmount.value>0 && transferAcc!==currentAcc){
+      transferAcc.movements.push(Number(inputTransferAmount.value))
+      currentAcc.movements.push(Number(-inputTransferAmount.value))
+      updateValue();
+     
+      labelWelcome.textContent=`Succesfully transferd to ${transferAcc.owner.split(' ')[0]}`
+      setTimeout(function(){
+      
+        labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+      },2300);
+    }
+    else{
+      labelWelcome.textContent=`Improper Data transfer amout or reciver acc `;
+      setTimeout(function(){
+      
+        labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+      },2300);
+    }
+  }
+  else{
+    labelWelcome.textContent=`The account u wanna transfer does not exist`;
+    setTimeout(function(){
+      
+      labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+    },2300);
+  }
+  inputTransferTo.value=inputTransferAmount.value='';
+
+})
+
+
+btnLoan.addEventListener('click',function(e){
+  e.preventDefault();
+  const amount = Number(inputLoanAmount.value)
+  if(amount>0 && currentAcc.movements.some(mov => mov>= amount*0.1)){
+    labelWelcome.textContent=`Your loan will be approved soon ${currentAcc.owner.split(' ')[0]}`
+    setTimeout(function(){
+      currentAcc.movements.push(amount)
+      updateValue();
+      labelWelcome.textContent=`Congrats ${currentAcc.owner.split(' ')[0]} your Loan is approved of ${amount}EURO `
+    },3000);
+    setTimeout(function(){
+      
+      labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+    },6300);
+  }
+  else{
+    labelWelcome.textContent=`Your account is not approved for loan`;
+    setTimeout(function(){
+      
+      labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+    },2300);
+  }
+  inputLoanAmount.value='';
+})
+
+btnClose.addEventListener('click',function(e){
+  e.preventDefault();
+  if(inputCloseUsername.value===currentAcc.username&& Number(inputClosePin.value)===currentAcc.pin){
+    const index = accounts.findIndex(acc=> acc.username===currentAcc.username);
+    labelWelcome.textContent=`Your Account will be deleted soon ${currentAcc.owner.split(' ')[0]}`
+    setTimeout(function(){
+      accounts.splice(index,1)
+      labelWelcome.textContent=` ${currentAcc.owner.split(' ')[0]} accounts has been deleted`
+      containerApp.style.opacity=0
+      
+    },1000);
+    setTimeout(function(){
+      
+      labelWelcome.textContent=`Log in to get started`
+    },1800);
+  }
+  else{
+    labelWelcome.textContent=`Your credintial to close account are wrong   try again!!!!!!!`
+    setTimeout(function(){
+      
+      labelWelcome.textContent=`Hello, ${currentAcc.owner.split(' ')[0]}`
+    },2300);
+  }
+  inputClosePin.value=inputCloseUsername.value='';
+})
+
+let sorted = false;
+
+btnSort.addEventListener('click',function(e){
+  e.preventDefault();
+  displayMovements(currentAcc.movements,!sorted);
+  sorted=!sorted;
+})
+
+
+
+
+
 
 
   
@@ -255,3 +388,63 @@ console.log(max);
 
 const totalDepositsUSD = movements.filter(mov=> mov>0).map(mov=> mov* eurToUsd).reduce((acc,mov)=> acc + mov,0);
 console.log(totalDepositsUSD);
+const firstWithdrawal = movements.find(mov=>mov<0);
+
+console.log(movements);
+console.log(firstWithdrawal);
+
+console.log(accounts);
+
+for(const [i,acc] of accounts.entries()){
+  if(acc.owner==='Jessica Davis'){
+    console.log(acc)
+  }
+  
+}
+console.log(movements)
+const anyDeposits = movements.some(mov=>mov>1500);
+console.log(anyDeposits);
+
+const arr1 =[1,2,3,4,5,6,7]
+
+const x= new Array(7);
+x.fill(1,3,5);
+console.log(x);
+
+arr1.fill(23,2,6);
+console.log(arr1);
+
+const y = Array.from({length:7},()=>1);
+console.log(y);
+
+const z = Array.from({length: 7},(_,i)=>i+1)
+console.log(z);
+
+labelBalance.addEventListener('click',function(){
+  const movementUI = Array.from(document.querySelectorAll('.movements__value'), el => Number(el.textContent.replace("€","")))
+  console.log(movementUI)
+})
+
+const numDeposits1000= accounts.flatMap(acc=> acc.movements).reduce((count,cur)=>(cur>=1000 ? count + 1: count),0);
+
+console.log(numDeposits1000)
+
+const {deposit,wwithdrawals}= accounts.flatMap(acc=>acc.movements).reduce((sums,cur)=>{
+  //cur>0?(sums.deposits += cur):(sums.wwithdrawals += cur);
+  sums[cur>0?'deposit':'wwithdrawals']+=cur;
+  return sums;
+},
+{deposit:0,wwithdrawals:0})
+
+console.log(deposit,wwithdrawals);
+
+const convertTitleCase = function(title){
+  const capitalize = str =>str[0].toUpperCase()+str.slice(1)
+  const exceptions=['a','an','and','the','but','or','on','in','with'];
+
+  const titleCase = title.toLowerCase().split(' ').map(word=>exceptions.includes(word)?word:word[0].toUpperCase() + word.slice(1)).join(' ')
+  return capitalize(titleCase);
+}
+console.log(convertTitleCase('this is a nice title'))
+console.log(convertTitleCase('this is a LONG title but not too LONG'))
+console.log(convertTitleCase('and here is another title with an EXAMPLE'))

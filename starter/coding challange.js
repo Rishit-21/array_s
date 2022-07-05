@@ -42,3 +42,49 @@ const arr4 = [5, 2, 4, 1, 15, 8, 3];
  console.log(`AVG age of adult dogs is: ${avgAge/bigDogs.length}`);
 
  
+const calcavg = (arr4.map(age=> age<=2?2*age:16+age*4).filter(age=> age>=18).reduce((acc,cur,i,arr)=> acc+cur/arr.length,0));
+console.log(calcavg)
+
+const dogs = [
+    { weight: 22, curFood: 250, owners: ['Alice', 'Bob'] },
+    { weight: 8, curFood: 200, owners: ['Matilda'] },
+    { weight: 13, curFood: 275, owners: ['Sarah', 'John'] },
+    { weight: 32, curFood: 340, owners: ['Michael'] },
+    ];
+    for(let [i,dog] of dogs.entries()){
+        let recommendedFood = Math.trunc((Number(dog.weight))**0.75*28)
+        console.log(recommendedFood)
+        if(recommendedFood<Number(dog.curFood)){
+            console.log(`your dog is eating to much ${dog.owners}`)
+          }
+          else if(recommendedFood>Number(dog.curFood)){
+            console.log(`your dog is eating to little ${dog.owners}`)
+            }
+            else{
+                console.log(`your  dog is eating in perfect amount ${dog.owners}`)
+            }
+            
+    }
+    const sarahDog= dogs.find(own=>own.owners.includes('Sarah'));
+    console.log(sarahDog)
+    if(sarahDog){
+      let recommend =Math.trunc((Number(sarahDog.weight))**0.75*28)
+      if(recommend<Number(sarahDog.curFood)){
+        console.log('your dog is eating to much')
+      }
+      else if(recommend>Number(sarahDog.curFood)){
+        console.log('your dog is eating to little')
+        }
+        else{
+            console.log('your  dog is eating in perfect amount')
+        }
+    }
+
+const ownerEatToMuch = dogs.filter(dog=>(Number((dog.weight))**0.75*28)<dog.curFood).flatMap(dog=>dog.owners)
+console.log(ownerEatToMuch)
+const ownerEatToLittle = dogs.filter(dog=>(Number((dog.weight))**0.75*28)>dog.curFood).flatMap(dog=>dog.owners)
+console.log(ownerEatToLittle)
+
+console.log(`${ownerEatToMuch[0]} and ${ownerEatToMuch[1]} and ${ownerEatToMuch[2]}'s dog eats to much`)
+console.log(`${ownerEatToLittle[0]} and ${ownerEatToLittle[1]} and ${ownerEatToLittle[2]}'s dog eats to little`)
+
