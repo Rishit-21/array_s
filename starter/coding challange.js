@@ -88,3 +88,34 @@ console.log(ownerEatToLittle)
 console.log(`${ownerEatToMuch[0]} and ${ownerEatToMuch[1]} and ${ownerEatToMuch[2]}'s dog eats to much`)
 console.log(`${ownerEatToLittle[0]} and ${ownerEatToLittle[1]} and ${ownerEatToLittle[2]}'s dog eats to little`)
 
+for(let [i,dog] of dogs.entries()){
+    const yes = true;
+    let recommendedFood = Math.trunc((Number(dog.weight))**0.75*28)
+    console.log(recommendedFood)
+    if(recommendedFood===Number(dog.curFood)){
+       console.log(yes)
+      }
+
+        else{
+           console.log(!yes)
+           
+        }
+        if(dog.curFood>Math.trunc(recommendedFood*.90)&&dog.curFood<Math.trunc(recommendedFood*1.10)){
+            console.log(`okay amount of food: ${yes}`)
+        }
+        else   console.log(`okay amount of food: ${!yes}`)
+        
+}
+
+let okayAmount = dogs.filter(dog =>dog.curFood>Math.trunc(Math.trunc((Number(dog.weight))**0.75*28)*.90)&&dog.curFood<Math.trunc(Math.trunc((Number(dog.weight))**0.75*28)*1.10))
+console.log(okayAmount)
+let recommendedFood;
+
+dogs.forEach(function(dog,i){
+    dog.recommendedFood = Math.trunc((Number(dog.weight))**0.75*28)
+})
+
+const sortDog = dogs.sort((a,b)=>{
+    return a.recommendedFood-b.recommendedFood
+})
+console.log(sortDog)
