@@ -119,3 +119,62 @@ const sortDog = dogs.sort((a,b)=>{
     return a.recommendedFood-b.recommendedFood
 })
 console.log(sortDog)
+let emps=[{
+    id:1,
+    name:'Rishit'
+},{
+    id:2,
+    name:'Sahil'
+}]
+
+let empAddress=[{
+    id:1,
+    age:20,
+    address:[{city:'Rajkot',
+            state:'Guj',
+            country:'India'},
+        {
+            city:'Rajkot',
+            state:'Guj',
+            country:'India'
+
+        }]
+
+},
+{
+    id:2,
+    age:25,
+    address:[{city:'AHM',
+    state:'Guj',
+    country:'India'}]
+
+}
+]
+let name;
+let id;
+
+
+const fn = function(i){
+    for(const e of emps){
+        if(e.id==i){
+            const empInfo= emps.map(e=>{
+                const add =empAddress.filter(empa=>e.id===empa.id)
+                //console.log(add[0])
+               
+         if(e.id===i){
+            const final ={
+                id:e.id,
+                name:e.name,
+                address:add[0].address
+            }
+            return final 
+         }
+               
+            })
+            console.log(empInfo[i-1])
+            break;
+        }
+    }
+
+}
+fn(2)

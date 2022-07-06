@@ -448,3 +448,14 @@ const convertTitleCase = function(title){
 console.log(convertTitleCase('this is a nice title'))
 console.log(convertTitleCase('this is a LONG title but not too LONG'))
 console.log(convertTitleCase('and here is another title with an EXAMPLE'))
+
+let x1=[1,2,3,4]
+let y1=[5,6,7,8]
+// let t1=[...y1]
+// y1=[...x1]
+// x1=[...t1]
+x1=x1.concat(y1)
+y1 = x1.slice(0,-y1.length)
+x1=x1.slice(-y1.length)
+console.log(x1)
+console.log(y1)
