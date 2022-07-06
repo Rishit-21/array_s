@@ -125,6 +125,10 @@ let emps=[{
 },{
     id:2,
     name:'Sahil'
+},
+{
+    id:3,
+    name:'Hardi'
 }]
 
 let empAddress=[{
@@ -146,7 +150,27 @@ let empAddress=[{
     age:25,
     address:[{city:'AHM',
     state:'Guj',
-    country:'India'}]
+    country:'India'},
+    {
+        city:'Rajkot',
+        state:'Guj',
+        country:'India'
+
+}]
+
+},
+{
+    id:3,
+    age:20,
+    address:[{city:'AHM',
+    state:'Guj',
+    country:'India'},
+    {
+        city:'Rajkot',
+        state:'Guj',
+        country:'India'
+
+}]
 
 }
 ]
@@ -158,7 +182,7 @@ const fn = function(i){
     for(const e of emps){
         if(e.id==i){
             const empInfo= emps.map(e=>{
-                const add =empAddress.filter(empa=>e.id===empa.id)
+                const add =empAddress.filter(empa=>e.id===empa.id )
                 //console.log(add[0])
                
          if(e.id===i){
@@ -177,4 +201,4 @@ const fn = function(i){
     }
 
 }
-fn(2)
+fn(1)
