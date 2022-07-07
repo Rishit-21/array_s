@@ -459,3 +459,21 @@ y1 = x1.slice(0,-y1.length)
 x1=x1.slice(-y1.length)
 console.log(x1)
 console.log(y1)
+
+let array1=[1,2,3,4,5];
+let array2=[6,7,8,9,10];
+array1=array1.reverse()
+console.log(array1)
+console.log(array2)
+let arr3= []
+let a =true;
+let i=-1
+array2.forEach(function(el,i){
+
+    arr3.push(el)
+    arr3.push(array1[i])
+  
+})
+console.log(arr3)
+
+
